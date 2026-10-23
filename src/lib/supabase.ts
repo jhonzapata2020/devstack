@@ -1,16 +1,42 @@
 import { createClient } from '@supabase/supabase-js';
 import { UnadTask, CreateUnadTaskInput } from '@/types/task';
 
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zciqpcdtklsjeoftirgz.supabase.co';
-const supabaseAnonKey =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_k_dKnIClTwMsw_GShOvQEA_7I5ZZBem';
+// Función de sanitización y validación robusta para prevenir fallos por variables malformadas en Vercel
+function resolveSupabaseUrl(): string {
+  const fallbackUrl = 'https://zciqpcdtklsjeoftirgz.supabase.co';
+  const rawUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/^["']|["']$/g, '');
 
-if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  console.warn(
-    '⚠️ UNAD DevTrack: Utilizando configuración por defecto de Supabase para compilación.'
-  );
+  if (!rawUrl) return fallbackUrl;
+
+  try {
+    const candidate = rawUrl.startsWith('http://') || rawUrl.startsWith('https://') 
+      ? rawUrl 
+      : `https://${rawUrl}`;
+
+    const parsed = new URL(candidate);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.origin;
+    }
+  } catch {
+    console.warn('⚠️ UNAD DevTrack: NEXT_PUBLIC_SUPABASE_URL no es válida, usando URL oficial fallback.');
+  }
+
+  return fallbackUrl;
 }
+
+function resolveSupabaseAnonKey(): string {
+  const fallbackKey = 'sb_publishable_k_dKnIClTwMsw_GShOvQEA_7I5ZZBem';
+  const rawKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim().replace(/^["']|["']$/g, '');
+
+  if (rawKey && rawKey.length > 10 && rawKey !== 'tu_publishable_key_aqui') {
+    return rawKey;
+  }
+
+  return fallbackKey;
+}
+
+const supabaseUrl = resolveSupabaseUrl();
+const supabaseAnonKey = resolveSupabaseAnonKey();
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
