@@ -54,7 +54,6 @@ export default function HomePage() {
 
   // Verificar si la key no es el placeholder genérico
   const isSupabaseConfigured =
-    Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) &&
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'tu_publishable_key_aqui';
 
   // 1. Cargar tareas (SELECT)

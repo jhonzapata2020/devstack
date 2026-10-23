@@ -1,12 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { UnadTask, CreateUnadTaskInput } from '@/types/task';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zciqpcdtklsjeoftirgz.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zciqpcdtklsjeoftirgz.supabase.co';
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_k_dKnIClTwMsw_GShOvQEA_7I5ZZBem';
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
   console.warn(
-    '⚠️ ADVERTENCIA UNAD DevTrack: Las variables de entorno de Supabase no están completamente configuradas en .env.local'
+    '⚠️ UNAD DevTrack: Utilizando configuración por defecto de Supabase para compilación.'
   );
 }
 
