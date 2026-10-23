@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
 import { CreateUnadTaskInput, TaskCategory, TaskPriority } from '@/types/task';
 import { 
   PlusCircle, 
@@ -46,15 +45,21 @@ export const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, isSubmitting }) =>
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
 
-  // Disparo de ráfaga de confeti con paleta institucional UNAD
-  const triggerUnadConfetti = () => {
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.7 },
-      colors: ['#005691', '#f39200', '#0078b8', '#ffb81c', '#ffffff'],
-      disableForReducedMotion: true,
-    });
+  // Disparo de ráfaga de confeti seguro para entornos SSR / Vercel
+  const triggerUnadConfetti = async () => {
+    if (typeof window === 'undefined') return;
+    try {
+      const confetti = (await import('canvas-confetti')).default;
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: ['#005691', '#f39200', '#0078b8', '#ffb81c', '#ffffff'],
+        disableForReducedMotion: true,
+      });
+    } catch {
+      // Manejo silencioso en caso de no soporte de canvas
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
